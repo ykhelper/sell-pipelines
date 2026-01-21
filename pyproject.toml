@@ -1,0 +1,18 @@
+[project]
+name = "sell-pipelines"
+version = "0.1.0"
+description = "E-commerce data pipelines for Shopee, Redmart, and Lazada"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "dagster>=1.12.10",
+    "dagster-duckdb>=0.28.10",
+    "dagster-embedded-elt>=0.28.10",
+    "dagster-webserver>=1.12.10",
+    "dlt[duckdb,workspace]>=1.20.0",
+    "httpx[http2]>=0.28.1",
+    "python-dotenv>=1.0.0",
+]
+
+[tool.dagster]
+module_name = "sellpipelines.definitions"
