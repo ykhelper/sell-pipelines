@@ -77,8 +77,21 @@ class ShopeeClient:
         )
         headers = {"Content-Type": "application/json"}
 
+        print("\n=== DEBUG: get_access_token Request ===")
+        print(f"URL: {url}")
+        print(f"Body: {json.dumps(body, indent=2)}")
+        print(f"Headers: {headers}")
+
         response = httpx.post(url, json=body, headers=headers)
+
+        print("\n=== DEBUG: get_access_token Response ===")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Headers: {dict(response.headers)}")
+        print(f"Response Body: {response.text}")
+
         content = json.loads(response.content)
+        print(f"Parsed JSON: {json.dumps(content, indent=2)}")
+
         return content
 
     def refreshToken(self, refresh_token):
@@ -108,9 +121,22 @@ class ShopeeClient:
             + str(sign)
         )
         headers = {"Content-Type": "application/json"}
+
+        print("\n=== DEBUG: refreshToken Request ===")
+        print(f"URL: {url}")
+        print(f"Body: {json.dumps(body, indent=2)}")
+        print(f"Headers: {headers}")
+
         response = httpx.post(url, json=body, headers=headers)
 
+        print("\n=== DEBUG: refreshToken Response ===")
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Headers: {dict(response.headers)}")
+        print(f"Response Body: {response.text}")
+
         content = json.loads(response.content)
+        print(f"Parsed JSON: {json.dumps(content, indent=2)}")
+
         return content.get("access_token"), content.get("refresh_token")
 
     def getOrderList(self, access_token, order_status, time_from, time_to):

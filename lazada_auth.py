@@ -1,6 +1,6 @@
-"""Generate Redmart Access Token using OAuth2 flow.
+"""Generate Lazada Access Token using OAuth2 flow.
 
-Redmart uses the same Lazada Open Platform OAuth flow.
+Lazada uses the Lazada Open Platform OAuth flow.
 """
 
 import os
@@ -11,15 +11,13 @@ from lazadaclient.client import LazadaClient
 
 load_dotenv()
 
-APP_KEY = os.getenv("REDMART_APP_KEY")
-APP_SECRET = os.getenv("REDMART_APP_SECRET")
-REDIRECT_URI = os.getenv("REDMART_REDIRECT_URI", "https://google.com")
-CODE = os.getenv("REDMART_CODE", "")
+APP_KEY = os.getenv("LAZADA_APP_KEY")
+APP_SECRET = os.getenv("LAZADA_APP_SECRET")
+REDIRECT_URI = os.getenv("LAZADA_REDIRECT_URI", "https://google.com")
+CODE = os.getenv("LAZADA_CODE", "")
 
 if not APP_KEY or not APP_SECRET:
-    raise ValueError(
-        "Missing REDMART_APP_KEY or REDMART_APP_SECRET in .env file"
-    )
+    raise ValueError("Missing LAZADA_APP_KEY or LAZADA_APP_SECRET in .env file")
 
 
 def step1_get_authorization_url():
@@ -27,14 +25,14 @@ def step1_get_authorization_url():
     client = LazadaClient(APP_KEY, APP_SECRET)
     url = client.get_authorization_url(REDIRECT_URI)
 
-    print("=== Redmart OAuth Step 1: Authorization ===")
+    print("=== Lazada OAuth Step 1: Authorization ===")
     print("\n1. Open this URL in your browser:")
     print(f"\n{url}\n")
-    print("2. Login with your Redmart seller account")
+    print("2. Login with your Lazada seller account")
     print("3. Authorize the application")
     print(f"4. You will be redirected to: {REDIRECT_URI}?code=XXX")
     print("5. Copy the 'code' parameter from the URL")
-    print("\nThen run: python redmart_auth.py <your_code>")
+    print("\nThen run: python lazada_auth.py <your_code>")
 
 
 def step2_get_access_token():
@@ -48,13 +46,13 @@ def step2_get_access_token():
         response = client.get_access_token(CODE)
 
         if "access_token" in response:
-            print("\n=== Redmart OAuth Step 2: Success! ===\n")
+            print("\n=== Lazada OAuth Step 2: Success! ===\n")
             print(f"Access Token: {response['access_token']}")
             print(f"Refresh Token: {response['refresh_token']}")
             print(f"Expires in: {response['expires_in']} seconds")
             print("\nAdd this to your .env file:")
-            print(f"REDMART_ACCESS_TOKEN={response['access_token']}")
-            print(f"REDMART_REFRESH_TOKEN={response['refresh_token']}")
+            print(f"LAZADA_ACCESS_TOKEN={response['access_token']}")
+            print(f"LAZADA_REFRESH_TOKEN={response['refresh_token']}")
             return response
         else:
             print("\n=== Error ===")
@@ -87,10 +85,10 @@ def step2_get_access_token():
 
 def step3_refresh_token():
     """Step 3: Refresh access token using refresh token."""
-    refresh_token = os.getenv("REDMART_REFRESH_TOKEN")
+    refresh_token = os.getenv("LAZADA_REFRESH_TOKEN")
 
     if not refresh_token:
-        print("ERROR: REDMART_REFRESH_TOKEN not found in .env file")
+        print("ERROR: LAZADA_REFRESH_TOKEN not found in .env file")
         return
 
     client = LazadaClient(APP_KEY, APP_SECRET)
@@ -103,16 +101,16 @@ def step3_refresh_token():
         response = client.refresh_access_token(refresh_token)
 
         if "access_token" in response:
-            print("\n=== Redmart Token Refresh: Success! ===\n")
+            print("\n=== Lazada Token Refresh: Success! ===\n")
             print(f"New Access Token: {response['access_token']}")
             print(
                 f"New Refresh Token: {response.get('refresh_token', 'Not provided')}"
             )
             print(f"Expires in: {response.get('expires_in', 'N/A')} seconds")
             print("\nUpdate these in your .env file:")
-            print(f"REDMART_ACCESS_TOKEN={response['access_token']}")
+            print(f"LAZADA_ACCESS_TOKEN={response['access_token']}")
             if "refresh_token" in response:
-                print(f"REDMART_REFRESH_TOKEN={response['refresh_token']}")
+                print(f"LAZADA_REFRESH_TOKEN={response['refresh_token']}")
             return response
         else:
             print("\n=== Error ===")

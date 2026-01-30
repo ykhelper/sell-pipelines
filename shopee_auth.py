@@ -91,16 +91,42 @@ def step3_refresh_token():
         code=CODE or "",
         shop_id=int(SHOP_ID),
     )
-    access_token, new_refresh_token = client.refreshToken(refresh_token)
-    if access_token:
-        print("\n=== Shopee Token Refresh: Success! ===\n")
-        print(f"New Access Token: {access_token}")
-        print(f"New Refresh Token: {new_refresh_token}")
-        print("\nUpdate these in your .env file:")
-        print(f"SHOPEE_ACCESS_TOKEN={access_token}")
-        print(f"SHOPEE_REFRESH_TOKEN={new_refresh_token}")
-    else:
-        print("\n=== Error refreshing token ===")
+
+    try:
+        print("\n=== Debug: Attempting to refresh token ===")
+        print(f"Partner ID: {PARTNER_ID}")
+        print(f"Shop ID: {SHOP_ID}")
+        print(f"Refresh Token (first 20 chars): {refresh_token[:20]}...")
+
+        access_token, new_refresh_token = client.refreshToken(refresh_token)
+
+        if access_token:
+            print("\n=== Shopee Token Refresh: Success! ===\n")
+            print(f"New Access Token: {access_token}")
+            print(f"New Refresh Token: {new_refresh_token}")
+            print("\nUpdate these in your .env file:")
+            print(f"SHOPEE_ACCESS_TOKEN={access_token}")
+            print(f"SHOPEE_REFRESH_TOKEN={new_refresh_token}")
+        else:
+            print("\n=== Error refreshing token ===")
+            print("No access token returned but no exception raised")
+    except Exception as e:
+        print("\n=== DETAILED ERROR ===")
+        print(f"Error Type: {type(e).__name__}")
+        print(f"Error Message: {str(e)}")
+        print(f"\nFull Exception Details:")
+        import traceback
+        traceback.print_exc()
+
+        # Try to extract response details if available
+        if hasattr(e, 'response'):
+            print("\n=== API Response Details ===")
+            print(f"Status Code: {e.response.status_code if hasattr(e.response, 'status_code') else 'N/A'}")
+            print(f"Response Text: {e.response.text if hasattr(e.response, 'text') else 'N/A'}")
+
+        # Check if there's additional error info from the client
+        if hasattr(e, '__dict__'):
+            print(f"\nException attributes: {e.__dict__}")
 
 
 if __name__ == "__main__":
